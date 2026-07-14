@@ -994,6 +994,11 @@
   white-space: pre-line;
 }
 
+.chat-message strong {
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
 .chat-message.loader {
   opacity: 0.7;
   font-style: italic;

@@ -218,7 +218,18 @@ function handleChipClick(e) {
 function appendMessageLog(logElement, sender, text) {
   const bubble = document.createElement('div');
   bubble.className = 'chat-message ' + sender;
-  bubble.textContent = text;
+  if (sender === 'bot') {
+    /* Securely escape and parse bold markdown and newlines */
+    const tempDiv = document.createElement('div');
+    tempDiv.textContent = text;
+    let safeHtml = tempDiv.innerHTML;
+    safeHtml = safeHtml.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    safeHtml = safeHtml.replace(/\*([^\*\s][^\*]*?)\*/g, '<strong>$1</strong>');
+    safeHtml = safeHtml.replace(/\n/g, '<br>');
+    bubble.innerHTML = safeHtml;
+  } else {
+    bubble.textContent = text;
+  }
   logElement.appendChild(bubble);
   logElement.scrollTop = logElement.scrollHeight;
 }
