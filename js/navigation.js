@@ -100,6 +100,9 @@ function buildNavigation() {
 
     wrap.innerHTML = html;
     applyDynamicStyles(wrap);
+    if (typeof window.observeNewElements === 'function') {
+      window.observeNewElements(wrap);
+    }
     attachNavigationListeners();
   }
 

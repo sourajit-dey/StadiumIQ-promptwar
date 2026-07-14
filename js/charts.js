@@ -13,7 +13,7 @@
  * @returns {void}
  */
 function initGoogleCharts() {
-  if (typeof google === 'undefined') {
+  if (typeof google === 'undefined' || !google.charts) {
     /* Fallback immediately if library is not loaded */
     buildCharts();
     return;
@@ -86,12 +86,13 @@ function buildCrowdChart(isLoaded) {
       const pct = Math.round((z.currentCrowd / z.capacity) * 100);
       html += '<div class="fallback-bar-row">';
       html += '<span class="fallback-label">' + z.name + '</span>';
-      html += '<div class="fallback-bar-outer"><div class="fallback-bar-inner" style="width:' + pct + '%;background:' + z.color + '"></div></div>';
+      html += '<div class="fallback-bar-outer"><div class="fallback-bar-inner" data-style-width="' + pct + '%" data-style-bg="' + z.color + '"></div></div>';
       html += '<span class="fallback-value">' + pct + '%</span>';
       html += '</div>';
     });
     html += '</div>';
     container.innerHTML = html;
+    applyDynamicStyles(container);
   }
 }
 
@@ -141,13 +142,14 @@ function buildTransportChart(isLoaded) {
     let html = '<div class="chart-fallback flex-col">';
     splits.forEach(function(s) {
       html += '<div class="fallback-legend-row">';
-      html += '<span class="legend-color-dot" style="background:' + s.color + '"></span>';
+      html += '<span class="legend-color-dot" data-style-bg="' + s.color + '"></span>';
       html += '<span class="fallback-label">' + s.name + '</span>';
       html += '<span class="fallback-value">' + s.share + '%</span>';
       html += '</div>';
     });
     html += '</div>';
     container.innerHTML = html;
+    applyDynamicStyles(container);
   }
 }
 
@@ -205,12 +207,13 @@ function buildSustainabilityChart(isLoaded) {
     metrics.forEach(function(m) {
       html += '<div class="fallback-bar-group">';
       html += '<div class="fallback-label">' + m.name + ' (Target: ' + m.tgt + '%)</div>';
-      html += '<div class="fallback-bar-outer"><div class="fallback-bar-inner" style="width:' + m.cur + '%;background:' + m.color + '"></div></div>';
+      html += '<div class="fallback-bar-outer"><div class="fallback-bar-inner" data-style-width="' + m.cur + '%" data-style-bg="' + m.color + '"></div></div>';
       html += '<div class="fallback-value">Current: ' + m.cur + '%</div>';
       html += '</div>';
     });
     html += '</div>';
     container.innerHTML = html;
+    applyDynamicStyles(container);
   }
 }
 

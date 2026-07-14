@@ -76,6 +76,27 @@ function initIntersectionObserver() {
 }
 
 /**
+ * @description Exposes a secure global function to observe new dynamically added DOM elements
+ *              using the single module-level scrollObserver instance.
+ * @param {HTMLElement} container - DOM container containing new elements
+ * @returns {void}
+ */
+function observeNewElements(container) {
+  if (!scrollObserver || !container) return;
+  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const elements = container.querySelectorAll('.animate-on-scroll');
+  elements.forEach(function(el) {
+    if (motionQuery.matches) {
+      el.classList.add('visible');
+    } else {
+      scrollObserver.observe(el);
+    }
+  });
+}
+
+window.observeNewElements = observeNewElements;
+
+/**
  * @description Builds the Accessible Facilities Guide section
  * @returns {void}
  */

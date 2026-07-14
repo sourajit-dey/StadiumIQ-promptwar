@@ -125,6 +125,7 @@ header {
 }
 
 .nav-item a {
+  white-space: nowrap;
   color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
@@ -137,6 +138,18 @@ header {
 .nav-item a:hover {
   color: var(--text-primary);
   background: var(--surface-light);
+}
+
+/* Hide Google Translate hover tooltips, widgets, and feedback banners */
+#goog-gt-tt, .goog-gt-tt, .goog-gt-tt * {
+  display: none !important;
+  visibility: hidden !important;
+}
+.goog-te-banner-frame {
+  display: none !important;
+}
+body {
+  top: 0 !important;
 }
 
 .nav-toggle {
@@ -266,7 +279,7 @@ footer {
 }
 
 /* Mobile responsive resets */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .nav-menu {
     display: none;
     flex-direction: column;

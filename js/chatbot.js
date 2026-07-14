@@ -306,30 +306,35 @@ async function dispatchAiRequest(query, logId) {
     }
   }
 
-  /* Mock Fallback Mode: Runs if server URL and direct key placeholders are unused */
-  const isMock = (CLOUD_FUNCTION_URL === 'YOUR_CLOUD_FUNCTION_URL_HERE' && GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE');
-
-  if (isMock) {
+  /* Hybrid Mode: check local mock categories first to optimize API calls & speed */
+  const localMatch = getMatchedMockResponse(query);
+  if (localMatch) {
     setTimeout(function() {
-      const reply = getMockResponse(query);
-      handleComplete(reply);
-    }, 800);
+      handleComplete(localMatch);
+    }, 400);
     return;
   }
 
-  /* Use Cloud Function Proxy if set, otherwise direct client request */
-  const requestUrl = (CLOUD_FUNCTION_URL !== 'YOUR_CLOUD_FUNCTION_URL_HERE')
-    ? CLOUD_FUNCTION_URL
-    : 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
+  /* Use Cloud Function Proxy if set, otherwise direct Gemini API if key is present, otherwise fallback to Vercel API endpoint */
+  let requestUrl = '';
+  let useDirectGemini = false;
+  if (CLOUD_FUNCTION_URL !== 'YOUR_CLOUD_FUNCTION_URL_HERE') {
+    requestUrl = CLOUD_FUNCTION_URL;
+  } else if (GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY_HERE' && GEMINI_API_KEY !== '') {
+    requestUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + GEMINI_API_KEY;
+    useDirectGemini = true;
+  } else {
+    requestUrl = '/api/stadiumIQChat';
+  }
 
   try {
-    const payload = (CLOUD_FUNCTION_URL !== 'YOUR_CLOUD_FUNCTION_URL_HERE')
-      ? { message: query, history: conversationHistory }
-      : {
+    const payload = (useDirectGemini)
+      ? {
           contents: [{
             parts: [{ text: getSystemPrompt() + '\nUser query: ' + query }]
           }]
-        };
+        }
+      : { message: query, history: conversationHistory };
 
     const response = await fetch(requestUrl, {
       method: 'POST',
@@ -341,24 +346,24 @@ async function dispatchAiRequest(query, logId) {
     const data = await response.json();
 
     let textAnswer = '';
-    if (CLOUD_FUNCTION_URL !== 'YOUR_CLOUD_FUNCTION_URL_HERE') {
-      textAnswer = data.reply || data.response || 'No operational answer returned.';
+    if (useDirectGemini) {
+      textAnswer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response returned from AI model.';
     } else {
-      textAnswer = data.candidates[0].content.parts[0].text;
+      textAnswer = data.reply || data.response || 'No operational answer returned.';
     }
     handleComplete(textAnswer);
   } catch (err) {
     /* Safe failure path handling: logs message details to UI and recovers gracefully */
-    handleComplete('⚠️ Connection to Gemini offline. Fallback Operational Answer: ' + getMockResponse(query));
+    handleComplete('⚠️ Live connection offline. Fallback Help: ' + getMockResponse());
   }
 }
 
 /**
- * @description Provides matching context-based operational facts for the WC 2026 venues
+ * @description Checks if query matches specific local operational logs categories
  * @param {string} query - Sanitized query string
- * @returns {string} Response string
+ * @returns {string|null} Specific mock response or null if no matches
  */
-function getMockResponse(query) {
+function getMatchedMockResponse(query) {
   const q = query.toLowerCase();
 
   if (q.includes('gate') || q.includes('entry') || q.includes('find my')) {
@@ -395,6 +400,14 @@ function getMockResponse(query) {
       'The Grand Final will take place at MetLife Stadium in New Jersey on July 19, 2026. Expected global attendance is 5 million+.';
   }
 
+  return null;
+}
+
+/**
+ * @description Provides matching context-based operational facts for the WC 2026 venues
+ * @returns {string} Response string
+ */
+function getMockResponse() {
   return 'StadiumIQ assistant: I can assist with tournament operations or fan queries for the 16 host venues ' +
     '(MetLife Stadium, Estadio Azteca, BC Place, SoFi, AT&T, etc.). Try asking: "How do I find Gate A?" or "Explain emergency Code Blue".';
 }

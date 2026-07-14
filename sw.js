@@ -9,7 +9,7 @@
  * @version 1.0.0
  */
 
-const CACHE_NAME = 'stadiumiq-v2';
+const CACHE_NAME = 'stadiumiq-v3';
 
 /** Static assets to pre-cache on install */
 const STATIC_ASSETS = [
