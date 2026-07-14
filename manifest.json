@@ -1,0 +1,38 @@
+{
+  "name": "StadiumIQ — FIFA World Cup 2026",
+  "short_name": "StadiumIQ",
+  "description": "GenAI-powered stadium experience platform for FIFA World Cup 2026 fans, staff, and organizers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1a56db",
+  "lang": "en",
+  "orientation": "any",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "assets/stadium.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "navigation", "utilities"],
+  "shortcuts": [
+    {
+      "name": "AI Assistant",
+      "url": "/#assistant",
+      "description": "Ask StadiumIQ AI a question"
+    },
+    {
+      "name": "Find My Gate",
+      "url": "/#navigation",
+      "description": "Stadium navigation and wayfinding"
+    },
+    {
+      "name": "Crowd Status",
+      "url": "/#crowd",
+      "description": "Live crowd density by zone"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "stadiumiq",
+  "version": "1.0.0",
+  "description": "GenAI stadium experience platform for FIFA World Cup 2026",
+  "main": "index.html",
+  "scripts": {
+    "lint": "eslint js/",
+    "deploy": "gcloud app deploy --project=YOUR_PROJECT_ID",
+    "deploy-fn": "cd functions && npm install && cd .. && gcloud functions deploy stadiumIQChat --runtime nodejs20 --trigger-http --allow-unauthenticated"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "globals": "^15.0.0"
+  },
+  "engines": { "node": ">=20" }
+}

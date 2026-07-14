@@ -1,0 +1,24 @@
+# Google Cloud App Engine — StadiumIQ
+# FIFA World Cup 2026 GenAI Platform — PromptWars 2026
+
+runtime: nodejs20
+
+handlers:
+  - url: /css
+    static_dir: css
+  - url: /js
+    static_dir: js
+  - url: /assets
+    static_dir: assets
+  - url: /sw.js
+    static_files: sw.js
+    upload: sw.js
+  - url: /manifest.json
+    static_files: manifest.json
+    upload: manifest.json
+  - url: /.*
+    static_files: index.html
+    upload: index.html
+
+env_variables:
+  NODE_ENV: "production"

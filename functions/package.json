@@ -1,0 +1,16 @@
+{
+  "name": "stadiumiq-functions",
+  "version": "1.0.0",
+  "description": "Firebase Cloud Functions backend proxy for StadiumIQ",
+  "main": "index.js",
+  "dependencies": {
+    "@google/generative-ai": "^0.12.0",
+    "cors": "^2.8.5",
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.0.0"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "private": true
+}

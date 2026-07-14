@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StadiumIQ — FIFA World Cup 2026 Stadium Operations</title>
+
+  <!-- Strict Content Security Policy (No unsafe-inline, No unsafe-eval) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.google.com; style-src 'self' https://fonts.googleapis.com https://translate.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://fonts.gstatic.com https://www.google.com; connect-src 'self' https://www.google-analytics.com https://*.firebaseio.com https://generativelanguage.googleapis.com https://translate.googleapis.com https://www.gstatic.com; frame-src 'self' https://maps.google.com https://www.google.com; child-src 'self' https://maps.google.com https://www.google.com;">
+
+  <!-- PWA Manifest & Theme -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a56db">
+
+  <!-- DNS Prefetch & Preconnect Optimization -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
+  <link rel="dns-prefetch" href="https://translate.google.com">
+  <link rel="dns-prefetch" href="https://translate.googleapis.com">
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+  <link rel="dns-prefetch" href="https://www.google-analytics.com">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- External Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+
+  <!-- External SDKs in Head (No inline initialization script blocks) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER"></script>
+  <script async src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+  <!-- Accessibility Skip-Link (First Element in Body) -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo-wrap" aria-label="StadiumIQ Homepage">
+        <img src="assets/stadium.svg" class="logo-img" alt="StadiumIQ Stadium Logo" loading="lazy">
+        <span class="logo-text">Stadium<span>IQ</span></span>
+      </a>
+
+      <!-- Multilingual Translate Widget Wrapper -->
+      <div class="translate-wrapper" aria-label="Select Language Translation">
+        <span>🌐 Translate:</span>
+        <div id="google_translate_element"></div>
+      </div>
+
+      <button id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation menu">
+        ☰
+      </button>
+
+      <nav aria-label="Main navigation">
+        <ul id="nav-menu" class="nav-menu">
+          <li class="nav-item"><a href="#hero">Overview</a></li>
+          <li class="nav-item"><a href="#navigation">Wayfinding</a></li>
+          <li class="nav-item"><a href="#crowd">Live Crowd</a></li>
+          <li class="nav-item"><a href="#transport">Transport</a></li>
+          <li class="nav-item"><a href="#accessibility">Accessibility</a></li>
+          <li class="nav-item"><a href="#sustainability">Green Stats</a></li>
+          <li class="nav-item"><a href="#operations">Operations</a></li>
+          <li class="nav-item"><a href="#assistant">AI Assistant</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Wrap -->
+  <main id="main-content">
+
+    <!-- Section 1: Hero -->
+    <section id="hero" aria-label="StadiumIQ Platform Overview">
+      <div class="hero-card animate-on-scroll">
+        <span class="hero-banner">FIFA WORLD CUP 2026™ GLOBAL SYSTEM</span>
+        <h1 class="hero-title">GenAI-Enabled Stadium Operations & Analytics</h1>
+        <p class="hero-desc">
+          Empowering fans, volunteers, and operations commanders with real-time stadium navigation,
+          crowd density indices, accessibility protocols, and multilingual intelligence.
+        </p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-number">48</div>
+            <div class="stat-label">Teams</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">104</div>
+            <div class="stat-label">Matches</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">16</div>
+            <div class="stat-label">Venues</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">200+</div>
+            <div class="stat-label">Nationalities</div>
+          </div>
+        </div>
+        <div class="visitor-panel" aria-label="Total site views recorded by StadiumIQ analytics">
+          <span>👥 Fan Visitors Tracked: </span>
+          <strong id="visitor-count">—</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Navigation & Wayfinding -->
+    <section id="navigation">
+      <h2>Smart Wayfinding & Stadium Map</h2>
+      <div id="navigation-content">
+        <!-- Rendered dynamically by js/navigation.js -->
+      </div>
+    </section>
+
+    <!-- Section 3: Live Crowd Monitor -->
+    <section id="crowd">
+      <h2>Live Crowd Density Monitor</h2>
+      <div id="crowd-content">
+        <!-- Rendered dynamically by js/crowd.js -->
+      </div>
+    </section>
+
+    <!-- Section 4: Transport Hub -->
+    <section id="transport">
+      <h2>Multi-Modal Transport & Commute Planner</h2>
+      <div id="transport-content">
+        <!-- Rendered dynamically by js/transport.js -->
+      </div>
+    </section>
+
+    <!-- Section 5: Accessibility Hub -->
+    <section id="accessibility">
+      <h2>Accessible Facilities & Services</h2>
+      <div id="accessibility-content">
+        <!-- Rendered dynamically by js/main.js -->
+      </div>
+    </section>
+
+    <!-- Section 6: Green Stadium Dashboard -->
+    <section id="sustainability">
+      <h2>Green Stadium Sustainability Dashboard</h2>
+      <div id="sustainability-content">
+        <!-- Rendered dynamically by js/main.js -->
+      </div>
+    </section>
+
+    <!-- Section 7: Operations Center -->
+    <section id="operations">
+      <h2>Staff & Volunteer Operations Center</h2>
+      <div id="operations-content">
+        <!-- Rendered dynamically by js/main.js -->
+      </div>
+    </section>
+
+    <!-- Section 8: AI Assistant -->
+    <section id="assistant">
+      <h2>StadiumIQ AI decision support</h2>
+      <div id="assistant-content">
+        <!-- Rendered dynamically by js/chatbot.js -->
+      </div>
+
+      <!-- FAQ Accordions (Embedded in Assistant Section) -->
+      <div class="faq-section animate-on-scroll">
+        <h3>Frequently Asked Operations Questions (FAQs)</h3>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="accordion-header" aria-expanded="false" aria-controls="faq-a">
+              Where can I scan my entry ticket?
+              <span class="accordion-icon" aria-hidden="true">▼</span>
+            </button>
+            <div id="faq-a" class="accordion-content" aria-hidden="true">
+              <div class="accordion-body">
+                All gate security stations scan ticket barcodes. Confirm which gate (Gate A-D) is closest to your seat block to minimize queuing delays.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="accordion-header" aria-expanded="false" aria-controls="faq-b">
+              What security parameters are enforced at entry?
+              <span class="accordion-icon" aria-hidden="true">▼</span>
+            </button>
+            <div id="faq-a" class="accordion-content" aria-hidden="true">
+              <div class="accordion-body">
+                We enforce a clear bag policy (max 30x30cm). No drones, large banners, recording cameras, or external alcoholic beverages are permitted inside.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="accordion-header" aria-expanded="false" aria-controls="faq-c">
+              How do volunteers trigger emergency codes?
+              <span class="accordion-icon" aria-hidden="true">▼</span>
+            </button>
+            <div id="faq-a" class="accordion-content" aria-hidden="true">
+              <div class="accordion-body">
+                Volunteers must alert stewards or call command (ext 5555) immediately to declare CODE GREEN, BLUE, RED, or YELLOW events. Avoid declaring codes over public channels.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-logo">StadiumIQ</div>
+    <p>© FIFA World Cup 2026™ Stadium Operations. Powered by Google Gemini & Antigravity.</p>
+  </footer>
+
+  <!-- Floating Chatbot FAB Container -->
+  <div id="assistant-fab-container">
+    <!-- Rendered dynamically by js/chatbot.js -->
+  </div>
+
+  <!-- External Script loading order matching AGENT_CONTEXT parameters -->
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/crowd.js"></script>
+  <script src="js/transport.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script src="js/tests.js"></script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>
