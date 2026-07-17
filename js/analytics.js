@@ -16,6 +16,10 @@
  */
 function initGoogleAnalytics() {
   window.dataLayer = window.dataLayer || [];
+  /**
+   * @description Data layer push helper for Google Analytics tracking events.
+   * @returns {void}
+   */
   function gtag() { window.dataLayer.push(arguments); }
   window.gtag = gtag;
   gtag('js', new Date());

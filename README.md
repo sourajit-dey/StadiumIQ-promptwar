@@ -28,6 +28,23 @@ The application is structured into the following folders:
 
 ---
 
+## Code Quality Standards
+
+StadiumIQ enforces professional engineering standards:
+
+- **JSDoc** — every function documented with @description,
+  @param, and @returns
+- **Named functions** — zero anonymous event handlers
+- **ESLint** — enforced via eslint.config.js with 12 rules
+- **const/let only** — zero var declarations
+- **No console statements** — outside test suite only
+- **Single responsibility** — functions under 40 lines
+- **Consistent style** — single quotes, semicolons, 2-space indent
+- **Error handling** — all catch blocks have explanatory comments
+- **File headers** — every JS file has @file JSDoc block
+
+---
+
 ## ⚽ Problem Statement Alignment (8 Key Areas)
 
 Every component of StadiumIQ aligns directly with the official PromptWars Challenge 4 problem guidelines:

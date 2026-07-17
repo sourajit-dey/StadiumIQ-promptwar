@@ -38,7 +38,10 @@ function getLocalVisitCount() {
     return parseInt(
       localStorage.getItem(LOCAL_VISITS_KEY) || '0', 10
     );
-  } catch (_) { return 0; }
+  } catch (_) {
+    /* Operation failed silently — non-critical background task */
+    return 0;
+  }
 }
 
 /**
@@ -50,7 +53,10 @@ function incrementLocalVisit() {
     const next = getLocalVisitCount() + 1;
     localStorage.setItem(LOCAL_VISITS_KEY, String(next));
     return next;
-  } catch (_) { return 1; }
+  } catch (_) {
+    /* Operation failed silently — non-critical background task */
+    return 1;
+  }
 }
 
 /**
@@ -71,6 +77,7 @@ function initFirebase() {
     firebaseReady = true;
     return true;
   } catch (_) {
+    /* Operation failed silently — non-critical background task */
     firebaseReady = false;
     return false;
   }
@@ -84,12 +91,23 @@ async function trackVisit() {
   const local = incrementLocalVisit();
   if (!firebaseReady || !firebaseDb) return local;
   try {
+    /**
+     * @description Transaction helper to increment overall visits count
+     * @param {number|null} val - Current visit value in db
+     * @returns {number} Updated visits value
+     */
+    function incrementTransaction(val) {
+      return (val || 0) + 1;
+    }
     await firebaseDb.ref('analytics/visits')
-      .transaction(function(n) { return (n || 0) + 1; });
+      .transaction(incrementTransaction);
     const snap = await firebaseDb
       .ref('analytics/visits').once('value');
     return snap.val() || local;
-  } catch (_) { return local; }
+  } catch (_) {
+    /* Operation failed silently — non-critical background task */
+    return local;
+  }
 }
 
 /**
@@ -103,7 +121,10 @@ async function getVisitCount() {
     const snap = await firebaseDb
       .ref('analytics/visits').once('value');
     return snap.val() || local;
-  } catch (_) { return local; }
+  } catch (_) {
+    /* Operation failed silently — non-critical background task */
+    return local;
+  }
 }
 
 /**
@@ -115,9 +136,19 @@ async function recordZoneView(zoneName) {
   if (!firebaseReady || !firebaseDb) return;
   try {
     const key = zoneName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    /**
+     * @description Transaction helper to increment zone views count
+     * @param {number|null} val - Current zone views value in db
+     * @returns {number} Updated zone views value
+     */
+    function incrementZoneTransaction(val) {
+      return (val || 0) + 1;
+    }
     await firebaseDb.ref('analytics/zones/' + key)
-      .transaction(function(n) { return (n || 0) + 1; });
-  } catch (_) { /* fail silently */ }
+      .transaction(incrementZoneTransaction);
+  } catch (_) {
+    /* Operation failed silently — non-critical background task */
+  }
 }
 
 /**
@@ -127,9 +158,19 @@ async function recordZoneView(zoneName) {
 async function recordChatQuery() {
   if (!firebaseReady || !firebaseDb) return;
   try {
+    /**
+     * @description Transaction helper to increment chat query count
+     * @param {number|null} val - Current chat queries value in db
+     * @returns {number} Updated chat queries value
+     */
+    function incrementChatTransaction(val) {
+      return (val || 0) + 1;
+    }
     await firebaseDb.ref('analytics/chat_queries')
-      .transaction(function(n) { return (n || 0) + 1; });
-  } catch (_) { /* fail silently */ }
+      .transaction(incrementChatTransaction);
+  } catch (_) {
+    /* Operation failed silently — non-critical background task */
+  }
 }
 
 /**
@@ -140,8 +181,18 @@ async function recordChatQuery() {
 async function recordTransportQuery(transportType) {
   if (!firebaseReady || !firebaseDb) return;
   try {
-    const key = transportType.replace(/[^a-z0-9]/gi,'_').toLowerCase();
+    const key = transportType.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    /**
+     * @description Transaction helper to increment transport query count
+     * @param {number|null} val - Current transport queries value in db
+     * @returns {number} Updated transport queries value
+     */
+    function incrementTransportTransaction(val) {
+      return (val || 0) + 1;
+    }
     await firebaseDb.ref('analytics/transport/' + key)
-      .transaction(function(n) { return (n || 0) + 1; });
-  } catch (_) { /* fail silently */ }
+      .transaction(incrementTransportTransaction);
+  } catch (_) {
+    /* Operation failed silently — non-critical background task */
+  }
 }

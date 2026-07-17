@@ -52,7 +52,15 @@ export default [
       "no-unused-vars": "warn",
       "no-undef": "error",
       "prefer-const": "error",
-      "no-var": "error"
+      "no-var": "error",
+      "no-console": "warn",
+      "eqeqeq": "error",
+      "no-empty": "warn",
+      "no-duplicate-case": "error",
+      "no-unreachable": "error",
+      "no-unused-expressions": "warn",
+      "consistent-return": "warn",
+      "default-case": "warn"
     }
   }
 ];

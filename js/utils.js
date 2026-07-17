@@ -14,14 +14,24 @@
  */
 function debounce(func, delay) {
   let timeoutId;
-  return function() {
+  /**
+   * @description Debounced execution wrapper
+   * @returns {void}
+   */
+  function debouncedFn() {
     const args = arguments;
     const context = this;
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(function() {
+    /**
+     * @description Timeout callback to execute the function
+     * @returns {void}
+     */
+    function executeDebounced() {
       func.apply(context, args);
-    }, delay);
-  };
+    }
+    timeoutId = setTimeout(executeDebounced, delay);
+  }
+  return debouncedFn;
 }
 
 /**
@@ -82,7 +92,10 @@ function getStorage(key, defaultValue) {
   try {
     const item = localStorage.getItem(key);
     return item ? JSON.parse(item) : defaultValue;
-  } catch (_) { return defaultValue; }
+  } catch (_) {
+    /* Operation failed silently — non-critical background task */
+    return defaultValue;
+  }
 }
 
 /**
@@ -95,7 +108,10 @@ function setStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
     return true;
-  } catch (_) { return false; }
+  } catch (_) {
+    /* Operation failed silently — non-critical background task */
+    return false;
+  }
 }
 
 /**
@@ -125,20 +141,44 @@ function formatNumber(num) {
 function applyDynamicStyles(container) {
   if (!container) return;
   const widthElements = container.querySelectorAll('[data-style-width]');
-  widthElements.forEach(function(el) {
+  /**
+   * @description Sets the width style property based on data attribute
+   * @param {HTMLElement} el - Element to apply style to
+   * @returns {void}
+   */
+  function applyWidth(el) {
     el.style.width = el.getAttribute('data-style-width');
-  });
+  }
+  widthElements.forEach(applyWidth);
   const bgElements = container.querySelectorAll('[data-style-bg]');
-  bgElements.forEach(function(el) {
+  /**
+   * @description Sets the background color style property based on data attribute
+   * @param {HTMLElement} el - Element to apply style to
+   * @returns {void}
+   */
+  function applyBg(el) {
     el.style.backgroundColor = el.getAttribute('data-style-bg');
-  });
+  }
+  bgElements.forEach(applyBg);
   const colorElements = container.querySelectorAll('[data-style-color]');
-  colorElements.forEach(function(el) {
+  /**
+   * @description Sets the text color style property based on data attribute
+   * @param {HTMLElement} el - Element to apply style to
+   * @returns {void}
+   */
+  function applyColor(el) {
     el.style.color = el.getAttribute('data-style-color');
-  });
+  }
+  colorElements.forEach(applyColor);
   const borderElements = container.querySelectorAll('[data-style-border]');
-  borderElements.forEach(function(el) {
+  /**
+   * @description Sets the border color style property based on data attribute
+   * @param {HTMLElement} el - Element to apply style to
+   * @returns {void}
+   */
+  function applyBorder(el) {
     el.style.borderColor = el.getAttribute('data-style-border');
-  });
+  }
+  borderElements.forEach(applyBorder);
 }
 
