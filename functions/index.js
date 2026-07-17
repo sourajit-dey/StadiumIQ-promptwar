@@ -45,7 +45,10 @@ exports.stadiumIQChat = functions.https.onRequest(function(req, res) {
     /* Inject HTTP Security headers */
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
     if (req.method !== 'POST') {
       res.status(405).json({ error: 'Method Not Allowed. Use POST.' });
@@ -77,7 +80,7 @@ exports.stadiumIQChat = functions.https.onRequest(function(req, res) {
       /* Initialize Gemini client */
       const ai = new GoogleGenAI({ apiKey: apiKey });
       const model = ai.getGenerativeModel({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         systemInstruction: 'You are StadiumIQ AI, the official Generative AI assistant for the FIFA World Cup 2026 operations. ' +
           'Support fans, volunteers, and operations staff across 16 venues (including MetLife Stadium, Azteca, BC Place). ' +
           'Provide helpful answers about navigation, crowd density (6 zones), green transport (metro, shuttle, cycling), ' +

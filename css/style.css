@@ -48,10 +48,7 @@ body {
   outline-offset: 3px !important;
 }
 
-/* Ensure no default outline: none is applied without fallback */
-input:focus, select:focus, button:focus, textarea:focus {
-  outline: none;
-}
+/* focus-visible handles all keyboard focus styles above */
 input:focus-visible, select:focus-visible, button:focus-visible, textarea:focus-visible {
   outline: 3px solid var(--accent) !important;
 }

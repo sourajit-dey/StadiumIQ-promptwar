@@ -22,7 +22,7 @@ function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function handleSwLoad() {
       navigator.serviceWorker.register('/sw.js')
-        .catch(function() {
+        .catch(function handleSwError() {
           /* Fallback failure path: silences registration errors */
         });
     });
@@ -396,6 +396,33 @@ function initApp() {
   const skipLink = document.querySelector('.skip-link');
   if (skipLink) {
     skipLink.addEventListener('click', handleSkipLinkClick);
+  }
+
+  /* Update AI status indicator based on config */
+  const statusText = document.getElementById('ai-status-text');
+  if (statusText) {
+    const hasKey = typeof GEMINI_API_KEY === 'string' &&
+      GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY_HERE' &&
+      GEMINI_API_KEY.length > 10;
+    const hasCloud = typeof CLOUD_FUNCTION_URL === 'string' &&
+      CLOUD_FUNCTION_URL !== 'YOUR_CLOUD_FUNCTION_URL_HERE' &&
+      CLOUD_FUNCTION_URL.startsWith('https://');
+    if (hasCloud) {
+      statusText.textContent =
+        'StadiumIQ AI active — Cloud Function backend secured';
+    } else if (hasKey) {
+      statusText.textContent =
+        'StadiumIQ AI active — powered by Google Gemini 2.5 Flash';
+    } else {
+      statusText.textContent =
+        'StadiumIQ AI ready — intelligent demo mode active';
+    }
+  }
+
+  /* Set aria-describedby on chatbot FAB */
+  const chatFab = document.getElementById('chat-fab');
+  if (chatFab) {
+    chatFab.setAttribute('aria-describedby', 'chatbot-desc');
   }
 }
 

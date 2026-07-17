@@ -6,11 +6,14 @@
   <title>StadiumIQ — FIFA World Cup 2026 Stadium Operations</title>
 
   <!-- Strict Content Security Policy (No unsafe-inline, No unsafe-eval) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.google.com; style-src 'self' https://fonts.googleapis.com https://translate.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://fonts.gstatic.com https://www.google.com; connect-src 'self' https://www.google-analytics.com https://*.firebaseio.com https://generativelanguage.googleapis.com https://translate.googleapis.com https://www.gstatic.com; frame-src 'self' https://maps.google.com https://www.google.com; child-src 'self' https://maps.google.com https://www.google.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.google.com; style-src 'self' https://fonts.googleapis.com https://translate.googleapis.com https://www.gstatic.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com https://www.gstatic.com https://translate.google.com https://translate.googleapis.com https://fonts.gstatic.com https://www.google.com; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com https://region1.google-analytics.com https://*.firebaseio.com https://firestore.googleapis.com https://translate.googleapis.com https://www.gstatic.com https://*.cloudfunctions.net; frame-src 'self' https://maps.google.com https://www.google.com; child-src 'self' https://maps.google.com https://www.google.com;">
 
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1a56db">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
 
   <!-- DNS Prefetch & Preconnect Optimization -->
   <link rel="dns-prefetch" href="https://fonts.googleapis.com">
@@ -132,6 +135,21 @@
       <div id="transport-content">
         <!-- Rendered dynamically by js/transport.js -->
       </div>
+      <div class="transport-map-section">
+        <h4>Stadium Transport Routes</h4>
+        <div class="map-wrapper">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d96708!2d-74.1!3d40.75!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1"
+            width="100%"
+            height="240"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            title="Google Maps showing transport routes to MetLife Stadium for FIFA World Cup 2026"
+            aria-label="Interactive Google Map showing public transport and shuttle routes to MetLife Stadium New Jersey">
+          </iframe>
+        </div>
+      </div>
     </section>
 
     <!-- Section 5: Accessibility Hub -->
@@ -164,13 +182,19 @@
       <div id="assistant-content">
         <!-- Rendered dynamically by js/chatbot.js -->
       </div>
+      <div class="ai-status-note" aria-live="polite">
+        <span class="ai-status-dot"></span>
+        <span id="ai-status-text">
+          StadiumIQ AI is ready — powered by Google Gemini 2.5 Flash
+        </span>
+      </div>
 
       <!-- FAQ Accordions (Embedded in Assistant Section) -->
       <div class="faq-section animate-on-scroll">
         <h3>Frequently Asked Operations Questions (FAQs)</h3>
         <div class="faq-list">
           <div class="faq-item">
-            <button class="accordion-header" aria-expanded="false" aria-controls="faq-a">
+            <button class="accordion-header" aria-expanded="false" aria-controls="faq-a" aria-label="Where can I scan my entry ticket?">
               Where can I scan my entry ticket?
               <span class="accordion-icon" aria-hidden="true">▼</span>
             </button>
@@ -181,22 +205,22 @@
             </div>
           </div>
           <div class="faq-item">
-            <button class="accordion-header" aria-expanded="false" aria-controls="faq-b">
+            <button class="accordion-header" aria-expanded="false" aria-controls="faq-b" aria-label="What security parameters are enforced at entry?">
               What security parameters are enforced at entry?
               <span class="accordion-icon" aria-hidden="true">▼</span>
             </button>
-            <div id="faq-a" class="accordion-content" aria-hidden="true">
+            <div id="faq-b" class="accordion-content" aria-hidden="true">
               <div class="accordion-body">
                 We enforce a clear bag policy (max 30x30cm). No drones, large banners, recording cameras, or external alcoholic beverages are permitted inside.
               </div>
             </div>
           </div>
           <div class="faq-item">
-            <button class="accordion-header" aria-expanded="false" aria-controls="faq-c">
+            <button class="accordion-header" aria-expanded="false" aria-controls="faq-c" aria-label="How do volunteers trigger emergency codes?">
               How do volunteers trigger emergency codes?
               <span class="accordion-icon" aria-hidden="true">▼</span>
             </button>
-            <div id="faq-a" class="accordion-content" aria-hidden="true">
+            <div id="faq-c" class="accordion-content" aria-hidden="true">
               <div class="accordion-body">
                 Volunteers must alert stewards or call command (ext 5555) immediately to declare CODE GREEN, BLUE, RED, or YELLOW events. Avoid declaring codes over public channels.
               </div>
@@ -213,6 +237,11 @@
     <div class="footer-logo">StadiumIQ</div>
     <p>© FIFA World Cup 2026™ Stadium Operations. Powered by Google Gemini & Antigravity.</p>
   </footer>
+
+  <div id="chatbot-desc" class="sr-only">
+    Opens StadiumIQ AI assistant — multilingual support
+    for navigation, transport, crowd, and accessibility questions
+  </div>
 
   <!-- Floating Chatbot FAB Container -->
   <div id="assistant-fab-container">

@@ -238,6 +238,25 @@ function testGroup13_ChatbotSecurity() {
 
   const inputEl = document.getElementById('chatbot-input') || document.getElementById('chat-input-floating');
   testAssert(inputEl && inputEl.maxLength === 500, 'Chatbot input must enforce a 500 character maximum');
+
+  /* Test that getDemoResponse function exists */
+  testAssert(typeof getDemoResponse === 'function', 'getDemoResponse function must exist');
+
+  /* Test demo response returns string */
+  const demoResp = getDemoResponse('where is gate a');
+  testAssert(typeof demoResp === 'string' && demoResp.length > 20, 'getDemoResponse must return meaningful string');
+
+  /* Test demo covers navigation */
+  const navResp = getDemoResponse('find my gate');
+  testAssert(navResp.toLowerCase().includes('gate'), 'Navigation demo response must cover gates');
+
+  /* Test demo covers transport */
+  const transResp = getDemoResponse('how to get here by metro');
+  testAssert(
+    transResp.toLowerCase().includes('metro') ||
+    transResp.toLowerCase().includes('transport'),
+    'Transport demo response must cover transport options'
+  );
 }
 
 /**
@@ -261,7 +280,6 @@ function testGroup14_DomainSpecificNav() {
 function testGroup15_ProblemStatementCoverage() {
   console.log('--- Group 15: Problem Statement Coverage ---');
 
-  /* Use cases map */
   /* Use Case 1: Smart Wayfinding */
   const navSection = document.getElementById('navigation');
   const hasWayfinding = !!navSection && !!document.getElementById('navigation-content');
@@ -300,6 +318,15 @@ function testGroup15_ProblemStatementCoverage() {
   const assistantSection = document.getElementById('assistant');
   const hasAssistant = !!assistantSection && !!document.getElementById('assistant-content');
   testAssert(hasAssistant, 'PASS: Use Case 8: Gemini-powered AI Assistant loaded');
+
+  /* Verify chatbot always responds (demo mode) */
+  testAssert(typeof getDemoResponse === 'function', 'AI always-on feature must exist');
+
+  /* Verify dispatchAiRequest is async function */
+  testAssert(
+    dispatchAiRequest.constructor.name === 'AsyncFunction',
+    'dispatchAiRequest must be async function'
+  );
 }
 
 /**
@@ -323,18 +350,66 @@ function runAllTests() {
   testGroup13_ChatbotSecurity();
   testGroup14_DomainSpecificNav();
   testGroup15_ProblemStatementCoverage();
+  testGroup16_EdgeCaseSanitization();
+  testGroup17_PWAServiceWorker();
   console.log('=============== ALL TESTS COMPLETED ===============');
 }
 
 window.runAllTests = runAllTests;
 
+/**
+ * @description Tests edge cases for input sanitization
+ * @returns {void}
+ */
+function testGroup16_EdgeCaseSanitization() {
+  console.log('--- GROUP 16: Edge Case Sanitization ---');
+  
+  /* Test XSS attempts */
+  const xssInput = '<script>alert("xss")</script>';
+  const sanitized = typeof sanitizeInput === 'function' ? sanitizeInput(xssInput) : xssInput;
+  const xssBlocked = !sanitized.includes('<script>');
+  console.log(xssBlocked ? 'PASS: XSS blocked' : 'FAIL: XSS not blocked');
+  
+  /* Test SQL injection attempts */
+  const sqlInput = "'; DROP TABLE users; --";
+  const sqlSanitized = typeof sanitizeInput === 'function' ? sanitizeInput(sqlInput) : sqlInput;
+  const sqlBlocked = !sqlSanitized.includes('DROP');
+  console.log(sqlBlocked ? 'PASS: SQL injection blocked' : 'FAIL: SQL injection not blocked');
+  
+  /* Test empty input handling */
+  const emptyResult = typeof sanitizeInput === 'function' ? sanitizeInput('') : '';
+  console.log(emptyResult === '' ? 'PASS: Empty input handled' : 'FAIL: Empty input not handled');
+}
+
+/**
+ * @description Tests PWA service worker registration
+ * @returns {void}
+ */
+function testGroup17_PWAServiceWorker() {
+  console.log('--- GROUP 17: PWA Service Worker ---');
+  
+  const hasServiceWorker = 'serviceWorker' in navigator;
+  console.log(hasServiceWorker ? 'PASS: Service Worker API available' : 'FAIL: Service Worker API not available');
+  
+  const hasManifest = document.querySelector('link[rel="manifest"]');
+  console.log(hasManifest ? 'PASS: PWA manifest present' : 'FAIL: PWA manifest missing');
+  
+  const hasThemeColor = document.querySelector('meta[name="theme-color"]');
+  console.log(hasThemeColor ? 'PASS: Theme color meta present' : 'FAIL: Theme color meta missing');
+}
+
+/**
+ * @description Handles DOMContentLoaded event for test auto-run
+ * @returns {void}
+ */
+function handleTestAutoRun() {
+  setTimeout(runAllTests, 1000);
+}
+
 /* Auto-run tests if '?test=true' URL parameter exists */
-(function() {
+(function initTestRunner() {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('test') === 'true') {
-    /* Delay execution slightly to ensure all DOM elements are fully initialized */
-    window.addEventListener('DOMContentLoaded', function() {
-      setTimeout(runAllTests, 1000);
-    });
+    window.addEventListener('DOMContentLoaded', handleTestAutoRun);
   }
 })();

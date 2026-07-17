@@ -1232,3 +1232,44 @@
 .accordion-body {
   padding: 16px 20px;
 }
+
+/* AI Status Indicator */
+.ai-status-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.ai-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+/* Transport Map Section */
+.transport-map-section {
+  margin-top: 24px;
+}
+
+.transport-map-section h4 {
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.transport-map-section .map-wrapper {
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.transport-map-section iframe {
+  border: 0;
+  border-radius: var(--radius);
+  width: 100%;
+}
