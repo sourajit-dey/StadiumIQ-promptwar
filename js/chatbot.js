@@ -159,6 +159,9 @@ function handleFabToggle() {
 
   isChatbotOpen = !isChatbotOpen;
   fab.setAttribute('aria-expanded', String(isChatbotOpen));
+  if (!isChatbotOpen) {
+    fab.focus();
+  }
   windowEl.setAttribute('aria-hidden', String(!isChatbotOpen));
   windowEl.classList.toggle('open', isChatbotOpen);
 
@@ -424,28 +427,31 @@ async function dispatchAiRequest(query, logId) {
       conversationHistory.shift();
     }
   }
-  const localMatch = getMatchedMockResponse(query);
-  if (localMatch) {
-    /**
-     * @description Timeout callback to trigger local match response completion
-     * @returns {void}
-     */
-    function triggerLocalComplete() {
-      handleComplete(localMatch);
-    }
-    setTimeout(triggerLocalComplete, 400);
+
+  /* Layer 1 — check mock/predefined responses first */
+  const mockResponse = getMatchedMockResponse(query);
+  if (mockResponse) {
+    setTimeout(function() {
+      handleComplete(mockResponse);
+    }, 400);
     return;
   }
-  const hasKey = typeof GEMINI_API_KEY === 'string' &&
-    GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY_HERE' &&
-    GEMINI_API_KEY.length > 10;
-  if (hasKey) {
+
+  /* Layer 2 — try Cloud Function if configured */
+  const cloudUrl = getSafeCloudUrl();
+  if (cloudUrl) {
     try {
-      const contents = prepareHistoryContents(query);
-      const res = await callGeminiApi(contents);
+      const res = await fetch(cloudUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: query,
+          history: conversationHistory.slice(-10)
+        })
+      });
       if (res.ok) {
         const data = await res.json();
-        const text = parseGeminiResponse(data);
+        const text = data && data.response ? data.response : '';
         if (text) {
           trackChatMessage();
           recordChatQuery();
@@ -454,11 +460,68 @@ async function dispatchAiRequest(query, logId) {
         }
       }
     } catch (_) {
-      /* Operation failed silently — non-critical background task */
+      /* Cloud Function failed — fall through */
     }
   }
-  trackChatMessage();
-  recordChatQuery();
+
+  /* Layer 3 — try direct Gemini API if key configured */
+  const apiKey = getSafeApiKey();
+  if (apiKey) {
+    try {
+      const contents = conversationHistory.slice(-10).concat([
+        { role: 'user', parts: [{ text: query }] }
+      ]);
+      const res = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/' +
+        'models/gemini-2.0-flash:generateContent?key=' + apiKey,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: {
+              parts: [{ text: getSystemPrompt() }]
+            },
+            contents,
+            generationConfig: {
+              maxOutputTokens: 350,
+              temperature: 0.4
+            }
+          })
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const text = data &&
+          data.candidates &&
+          data.candidates[0] &&
+          data.candidates[0].content &&
+          data.candidates[0].content.parts &&
+          data.candidates[0].content.parts[0] &&
+          data.candidates[0].content.parts[0].text
+          ? data.candidates[0].content.parts[0].text
+          : '';
+        if (text) {
+          trackChatMessage();
+          recordChatQuery();
+          handleComplete(text);
+          return;
+        }
+      }
+    } catch (_) {
+      /* Direct API failed — fall through to demo */
+    }
+  }
+
+  /* Layer 4 — GUARANTEED fallback — always fires */
+  /* This layer always runs if all above fail */
+  /* Ensures handleComplete is ALWAYS called */
+  /* Spinner is NEVER left running */
+  try {
+    trackChatMessage();
+  } catch (_) { /* fail silently */ }
+  try {
+    recordChatQuery();
+  } catch (_) { /* fail silently */ }
   handleComplete(getDemoResponse(query));
 }
 
@@ -654,7 +717,17 @@ function getDemoResponse(message) {
       msg.includes('arabic') || msg.includes('multilingual')) {
     return getDemoLanguageResponse();
   }
-  return getDemoDefaultResponse();
+
+  /* Catch-all — handles any message not matched above */
+  return 'Welcome to StadiumIQ AI for FIFA World Cup 2026! 🏆\n\n' +
+    'I can help you with:\n' +
+    '• Navigation — find your gate, seat, or any facility\n' +
+    '• Crowd levels — which zones are least busy right now\n' +
+    '• Transport — best route to and from the stadium\n' +
+    '• Accessibility — wheelchair, hearing, visual, quiet rooms\n' +
+    '• Sustainability — green initiatives and eco choices\n' +
+    '• Staff guidance — roles, zones, emergency protocols\n\n' +
+    'What do you need help with today?';
 }
 
 /**
@@ -716,4 +789,40 @@ function getSystemPrompt() {
     'accessibility facilities (wheelchairs, sensory quiet rooms, loops), sustainability progress (solar energy), ' +
     'and operations roles (stewards, medicals). Enforce emergency codes (CODE GREEN, BLUE, RED, YELLOW). ' +
     'Respond in the language the user writes in. Keep answers concise.';
+}
+
+/**
+ * @description Safe config accessor for GEMINI_API_KEY.
+ *              Returns empty string if variable is undefined.
+ *              Handles case where config.js fails to load (404).
+ * @returns {string} API key string or empty string
+ */
+function getSafeApiKey() {
+  try {
+    return (typeof GEMINI_API_KEY === 'string' &&
+      GEMINI_API_KEY.length > 10 &&
+      GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY_HERE')
+      ? GEMINI_API_KEY : '';
+  } catch (_) {
+    /* config.js not loaded — return empty */
+    return '';
+  }
+}
+
+/**
+ * @description Safe config accessor for CLOUD_FUNCTION_URL.
+ *              Returns empty string if variable is undefined.
+ *              Handles case where config.js fails to load (404).
+ * @returns {string} Cloud Function URL or empty string
+ */
+function getSafeCloudUrl() {
+  try {
+    return (typeof CLOUD_FUNCTION_URL === 'string' &&
+      CLOUD_FUNCTION_URL.startsWith('https://') &&
+      CLOUD_FUNCTION_URL !== 'YOUR_CLOUD_FUNCTION_URL_HERE')
+      ? CLOUD_FUNCTION_URL : '';
+  } catch (_) {
+    /* config.js not loaded — return empty */
+    return '';
+  }
 }
